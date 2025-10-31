@@ -15,7 +15,7 @@ class LoadTodosEvent extends TodoEvent {
 }
 
 class RemoveTodoEvent extends TodoEvent {
-  final String todo;
+  final TodoModel todo;
 
   RemoveTodoEvent(this.todo);
 }

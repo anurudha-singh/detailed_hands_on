@@ -57,7 +57,7 @@ class _TodoListWithFilterState extends State<TodoListWithFilter> {
                         onDismissed: (direction) {
                           final todoToDelete = state.todos[index];
                           context.read<TODOBloc>().add(
-                            RemoveTodoEvent(todoToDelete.title),
+                            RemoveTodoEvent(todoToDelete),
                           );
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(

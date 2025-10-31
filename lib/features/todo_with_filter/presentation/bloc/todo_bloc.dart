@@ -36,11 +36,22 @@ class TODOBloc extends Bloc<TodoEvent, TodoState> {
   }
 
   void _removeTodoEvent(RemoveTodoEvent event, Emitter<TodoState> emit) {
+    print('Removing todo: ${event.todo.createdAt}');
     emit(
       state.copyWith(
-        todos: state.todos.where((todo) => todo.title != event.todo).toList(),
+        todos: state.todos
+            .where(
+              (todo) =>
+                  (todo.title != event.todo.title ||
+                  todo.createdAt != event.todo.createdAt),
+            )
+            .toList(),
         filteredTodos: state.filteredTodos
-            .where((todo) => todo.title != event.todo)
+            .where(
+              (todo) =>
+                  (todo.title != event.todo.title ||
+                  todo.createdAt != event.todo.createdAt),
+            )
             .toList(),
         status: TodoStatus.completed,
       ),
