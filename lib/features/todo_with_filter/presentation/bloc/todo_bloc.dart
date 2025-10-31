@@ -1,10 +1,13 @@
 import 'package:bloc/bloc.dart';
 import 'package:detailed_hands_on/features/todo_with_filter/data/todo_model.dart';
+import 'package:detailed_hands_on/features/todo_with_filter/data/todo_repository_implementation.dart';
 import 'package:detailed_hands_on/features/todo_with_filter/presentation/bloc/todo_event.dart';
 import 'package:detailed_hands_on/features/todo_with_filter/presentation/bloc/todo_state.dart';
 
 class TODOBloc extends Bloc<TodoEvent, TodoState> {
-  TODOBloc() : super(TodoState.initial()) {
+  TodoRepositoryImplementation todoRepositoryImplementation;
+  TODOBloc({required this.todoRepositoryImplementation})
+    : super(TodoState.initial()) {
     on<AddTodoEvent>(_addTodoEvent);
     on<RemoveTodoEvent>(_removeTodoEvent);
     on<ToggleTodoEvent>(_toggleTodoEvent);
