@@ -1,4 +1,5 @@
 import 'package:detailed_hands_on/features/todo_with_filter/data/todo_model.dart';
+import 'package:detailed_hands_on/features/todo_with_filter/presentation/bloc/todo_state.dart';
 
 sealed class TodoEvent {}
 
@@ -24,4 +25,10 @@ class ToggleTodoEvent extends TodoEvent {
   final int ID;
 
   ToggleTodoEvent(this.ID);
+}
+
+class FetchFilteredToDoEvent extends TodoEvent {
+  final FilterType filterType;
+
+  FetchFilteredToDoEvent(this.filterType);
 }

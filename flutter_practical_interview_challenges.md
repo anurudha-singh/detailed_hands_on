@@ -18,7 +18,7 @@ Implement a counter app where:
 
 ---
 
-### 🧩 Question 2: Todo App with Filtering
+### 🧩 Question 2: Todo App with Filtering. 
 Create a simple todo app with:
 - Add / delete update tasks.
 - Mark as done.

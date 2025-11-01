@@ -138,6 +138,41 @@ class _TodoListWithFilterState extends State<TodoListWithFilter> {
                   child: Text('Add Todo'),
                 ),
                 SizedBox(height: 20),
+
+                Wrap(
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        context.read<TODOBloc>().add(
+                          FetchFilteredToDoEvent(FilterType.all),
+                        );
+                      },
+                      child: Text('Apply all filter'),
+                    ),
+                    SizedBox(height: 20),
+
+                    ElevatedButton(
+                      onPressed: () {
+                        context.read<TODOBloc>().add(
+                          FetchFilteredToDoEvent(FilterType.pending),
+                        );
+                      },
+                      child: Text('Apply pending filter'),
+                    ),
+                    SizedBox(height: 20),
+
+                    ElevatedButton(
+                      onPressed: () {
+                        context.read<TODOBloc>().add(
+                          FetchFilteredToDoEvent(FilterType.completed),
+                        );
+                      },
+                      child: Text('Apply completed filter'),
+                    ),
+                  ],
+                ),
+
+                SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () {
                     Navigator.pop(context);

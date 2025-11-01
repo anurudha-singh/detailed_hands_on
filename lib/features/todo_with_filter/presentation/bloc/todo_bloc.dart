@@ -12,8 +12,30 @@ class TODOBloc extends Bloc<TodoEvent, TodoState> {
     on<RemoveTodoEvent>(_removeTodoEvent);
     on<ToggleTodoEvent>(_toggleTodoEvent);
     on<LoadTodosEvent>(_loadTodosEvent);
+    on<FetchFilteredToDoEvent>(_fetchFilteredToDo);
     add(LoadTodosEvent());
   }
+
+  void _fetchFilteredToDo(
+    FetchFilteredToDoEvent event,
+    Emitter<TodoState> emit,
+  ) async {
+    print('Filtering todos with filter type: ${event.filterType}');
+    List<TodoModel> todos = await todoRepositoryImplementation.fetchTodos();
+    final filteredTodos = todos.where((todo) {
+      switch (event.filterType) {
+        case FilterType.all:
+          return true;
+        case FilterType.completed:
+          return todo.isDone;
+        case FilterType.pending:
+          return !todo.isDone;
+      }
+    }).toList();
+
+    emit(state.copyWith(todos: filteredTodos));
+  }
+
   void _loadTodosEvent(LoadTodosEvent event, Emitter<TodoState> emit) async {
     List<TodoModel> todos = await todoRepositoryImplementation.fetchTodos();
     emit(
