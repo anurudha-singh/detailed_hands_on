@@ -41,6 +41,9 @@ dependencies:
   hive: ^2.2.3
   path: ^1.9.1
   easy_localization: ^3.0.8
+  http: ^1.1.0
+  connectivity_plus: ^6.0.5
+  intl: ^0.20.2
 
 dev_dependencies:
   flutter_test:

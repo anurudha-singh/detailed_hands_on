@@ -84,7 +84,18 @@ class _CounterScreenState extends State<CounterScreen> {
               onPressed: () {
                 Navigator.pushNamed(context, TodoListWithFilter.routeName);
               },
-              child: Text('Go to Todo List With Filter'),
+              child: Text('go_to_todo_list'),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/posts');
+              },
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.purple),
+              child: const Text(
+                'Go to Posts (Offline-First)',
+                style: TextStyle(color: Colors.white),
+              ),
             ),
             SizedBox(height: 20),
             ElevatedButton(
