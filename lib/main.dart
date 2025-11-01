@@ -1,4 +1,5 @@
 import 'package:detailed_hands_on/core/utils/routes.dart';
+import 'package:detailed_hands_on/features/counter/presentation/bloc/counter_bloc.dart';
 import 'package:detailed_hands_on/features/todo_with_filter/data/todo_database.dart';
 import 'package:detailed_hands_on/features/todo_with_filter/data/todo_repository_implementation.dart';
 import 'package:detailed_hands_on/features/todo_with_filter/presentation/bloc/todo_bloc.dart';
@@ -28,6 +29,8 @@ class MyApp extends StatelessWidget {
             todoRepositoryImplementation: todoRepositoryImplementation,
           ),
         ),
+
+        BlocProvider(create: (BuildContext context) => CounterBloc()),
       ],
       child: MaterialApp(
         title: 'Detailed Hands On',
