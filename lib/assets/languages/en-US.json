@@ -1,0 +1,16 @@
+{
+    "counter": "Counter",
+    "todo_list_with_filter": "Todo List With Filter",
+    "add_todo": "Add Todo",
+    "delete": "Delete",
+    "new_todo_item": "New Todo Item",
+    "enter_todo_title": "Enter todo title",
+    "cancel": "Cancel",
+    "add": "Add",
+    "back_to_counter": "Back to Counter Screen",
+    "created_at": "Created at",
+    "deleted": "Deleted",
+    "apply_all_filter": "Apply all filter",
+    "apply_pending_filter": "Apply pending filter",
+    "apply_completed_filter": "Apply completed filter"
+}

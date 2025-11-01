@@ -1,0 +1,16 @@
+{
+    "counter": "Contador",
+    "todo_list_with_filter": "Lista de Tareas con Filtro",
+    "add_todo": "Agregar Tarea",
+    "delete": "Eliminar",
+    "new_todo_item": "Nueva Tarea",
+    "enter_todo_title": "Ingresa el título de la tarea",
+    "cancel": "Cancelar",
+    "add": "Agregar",
+    "back_to_counter": "Volver a Contador",
+    "created_at": "Creado en",
+    "deleted": "Eliminado",
+    "apply_all_filter": "Aplicar filtro de todos",
+    "apply_pending_filter": "Aplicar filtro pendientes",
+    "apply_completed_filter": "Aplicar filtro completadas"
+}

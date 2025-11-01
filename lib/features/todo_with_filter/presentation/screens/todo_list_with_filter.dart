@@ -4,6 +4,7 @@ import 'package:detailed_hands_on/features/todo_with_filter/presentation/bloc/to
 import 'package:detailed_hands_on/features/todo_with_filter/presentation/bloc/todo_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class TodoListWithFilter extends StatefulWidget {
   const TodoListWithFilter({super.key});
@@ -18,8 +19,32 @@ class _TodoListWithFilterState extends State<TodoListWithFilter> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Todo List With Filter'),
+        title: Text('todo_list_with_filter'.tr()),
         backgroundColor: Colors.green,
+        actions: [
+          PopupMenuButton<String>(
+            onSelected: (String locale) {
+              if (locale == 'en') {
+                context.setLocale(const Locale('en'));
+              } else if (locale == 'es') {
+                context.setLocale(const Locale('es'));
+              }
+            },
+            itemBuilder: (BuildContext context) {
+              return [
+                const PopupMenuItem<String>(
+                  value: 'en',
+                  child: Text('English'),
+                ),
+                const PopupMenuItem<String>(
+                  value: 'es',
+                  child: Text('Español'),
+                ),
+              ];
+            },
+            icon: const Icon(Icons.language),
+          ),
+        ],
       ),
       body: BlocBuilder<TODOBloc, TodoState>(
         builder: (context, state) {
@@ -29,7 +54,7 @@ class _TodoListWithFilterState extends State<TodoListWithFilter> {
               // mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(height: 20),
-                Text('This is the Todo List With Filter Screen'),
+                Text('todo_list_with_filter'.tr()),
 
                 SizedBox(height: 20),
                 Container(
@@ -61,7 +86,9 @@ class _TodoListWithFilterState extends State<TodoListWithFilter> {
                           );
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text('Deleted "${todoToDelete.title}"'),
+                              content: Text(
+                                '${'deleted'.tr()} "${todoToDelete.title}"',
+                              ),
                             ),
                           );
                         },
@@ -76,7 +103,7 @@ class _TodoListWithFilterState extends State<TodoListWithFilter> {
                               ),
                             ),
                             subtitle: Text(
-                              'Created at: ${state.todos[index].createdAt}',
+                              '${'created_at'.tr()}: ${state.todos[index].createdAt}',
                             ),
                             trailing: Checkbox(
                               value: state.todos[index].isDone,
@@ -106,10 +133,10 @@ class _TodoListWithFilterState extends State<TodoListWithFilter> {
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
-                          title: Text('Add Todo'),
+                          title: Text('add_todo'.tr()),
                           content: TextField(
                             decoration: InputDecoration(
-                              hintText: 'Enter todo title',
+                              hintText: 'enter_todo_title'.tr(),
                             ),
                           ),
                           actions: [
@@ -117,25 +144,25 @@ class _TodoListWithFilterState extends State<TodoListWithFilter> {
                               onPressed: () {
                                 Navigator.pop(context);
                               },
-                              child: Text('Cancel'),
+                              child: Text('cancel'.tr()),
                             ),
                             TextButton(
                               onPressed: () {
                                 context.read<TODOBloc>().add(
                                   AddTodoEvent(
-                                    TodoModel(title: 'New Todo Item'),
+                                    TodoModel(title: 'new_todo_item'.tr()),
                                   ),
                                 );
                                 Navigator.pop(context);
                               },
-                              child: Text('Add'),
+                              child: Text('add'.tr()),
                             ),
                           ],
                         );
                       },
                     );
                   },
-                  child: Text('Add Todo'),
+                  child: Text('add_todo'.tr()),
                 ),
                 SizedBox(height: 20),
 
@@ -147,7 +174,7 @@ class _TodoListWithFilterState extends State<TodoListWithFilter> {
                           FetchFilteredToDoEvent(FilterType.all),
                         );
                       },
-                      child: Text('Apply all filter'),
+                      child: Text('apply_all_filter'.tr()),
                     ),
                     SizedBox(height: 20),
 
@@ -157,7 +184,7 @@ class _TodoListWithFilterState extends State<TodoListWithFilter> {
                           FetchFilteredToDoEvent(FilterType.pending),
                         );
                       },
-                      child: Text('Apply pending filter'),
+                      child: Text('apply_pending_filter'.tr()),
                     ),
                     SizedBox(height: 20),
 
@@ -167,7 +194,7 @@ class _TodoListWithFilterState extends State<TodoListWithFilter> {
                           FetchFilteredToDoEvent(FilterType.completed),
                         );
                       },
-                      child: Text('Apply completed filter'),
+                      child: Text('apply_completed_filter'.tr()),
                     ),
                   ],
                 ),
@@ -177,7 +204,7 @@ class _TodoListWithFilterState extends State<TodoListWithFilter> {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: Text('Back to Counter Screen'),
+                  child: Text('back_to_counter'.tr()),
                 ),
               ],
             ),

@@ -1,3 +1,5 @@
+import 'package:detailed_hands_on/core/bloc/bloc/language/language_bloc.dart';
+import 'package:detailed_hands_on/core/bloc/bloc/language/language_event.dart';
 import 'package:detailed_hands_on/core/bloc/bloc/themes_bloc.dart';
 import 'package:detailed_hands_on/features/counter/presentation/bloc/counter_bloc.dart';
 import 'package:detailed_hands_on/features/counter/presentation/bloc/counter_event.dart';
@@ -22,6 +24,20 @@ class _CounterScreenState extends State<CounterScreen> {
         title: const Text('Counter'),
         backgroundColor: Colors.blueAccent,
         actions: [
+          BlocBuilder<LanguageBloc, LanguageState>(
+            builder: (context, state) {
+              return GestureDetector(
+                onTap: () {
+                  print('changing language to ${state.currentlocale}');
+                  context.read<LanguageBloc>().add(
+                    ChangeLanguage(state.currentlocale == 'en' ? 'es' : 'en'),
+                  );
+                },
+                child: Icon(Icons.language),
+              );
+            },
+          ),
+
           BlocBuilder<ThemesBloc, ThemesState>(
             builder: (context, state) => Switch(
               value: state.isDark,
