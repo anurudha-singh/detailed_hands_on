@@ -1,6 +1,7 @@
 import 'package:detailed_hands_on/core/bloc/bloc/language/language_bloc.dart';
 import 'package:detailed_hands_on/core/bloc/bloc/language/language_event.dart';
 import 'package:detailed_hands_on/core/bloc/bloc/themes_bloc.dart';
+import 'package:detailed_hands_on/core/presentation/list_pagination.dart';
 import 'package:detailed_hands_on/features/counter/presentation/bloc/counter_bloc.dart';
 import 'package:detailed_hands_on/features/counter/presentation/bloc/counter_event.dart';
 import 'package:detailed_hands_on/features/counter/presentation/bloc/counter_state.dart';
@@ -86,7 +87,12 @@ class _CounterScreenState extends State<CounterScreen> {
               child: Text('Go to Todo List With Filter'),
             ),
             SizedBox(height: 20),
-            Text('Counter Screen'),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, PaginationList.routeName);
+              },
+              child: Text('See pagination infinite list'),
+            ),
           ],
         ),
       ),
