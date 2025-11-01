@@ -18,7 +18,7 @@ class TodoDatabase {
       join(await getDatabasesPath(), 'todo_database.db'),
       onCreate: (db, version) {
         return db.execute(
-          'CREATE TABLE $tableTodos(id TEXT PRIMARY KEY, title TEXT, isDone INTEGER, createdAt TEXT)',
+          'CREATE TABLE $tableTodos(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, isDone INTEGER, createdAt TEXT)',
         );
       },
       version: 1,
@@ -49,6 +49,8 @@ class TodoDatabase {
   Future<List<TodoModel>> getTodos() async {
     final db = database;
     final List<Map<String, dynamic>> maps = await db.query(tableTodos);
+    print('Fetched todos from DB: $maps');
+
     return List.generate(maps.length, (i) {
       return TodoModel.fromMap(maps[i]);
     });
@@ -63,13 +65,17 @@ class TodoDatabase {
     );
   }
 
-  updateTodo(TodoModel todo) async {
+  updateTodo(int ID) async {
     final db = database;
     await db.update(
       tableTodos,
-      todo.toMap(),
+      {
+        'isDone': await db
+            .rawQuery('SELECT isDone FROM $tableTodos WHERE id = ?', [ID])
+            .then((value) => value.first['isDone'] == 1 ? 0 : 1),
+      },
       where: 'id = ?',
-      whereArgs: [todo.id],
+      whereArgs: [ID],
     );
   }
 }

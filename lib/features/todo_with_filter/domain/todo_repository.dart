@@ -5,5 +5,5 @@ abstract class TodoRepository {
 
   Future<List<TodoModel>> fetchTodos();
   Future<void> addTodo(TodoModel todo);
-  Future<void> updateTodo(TodoModel todo);
+  Future<void> updateTodo(int ID);
 }

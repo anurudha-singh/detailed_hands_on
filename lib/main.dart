@@ -1,4 +1,5 @@
 import 'package:detailed_hands_on/core/utils/routes.dart';
+import 'package:detailed_hands_on/features/todo_with_filter/data/todo_database.dart';
 import 'package:detailed_hands_on/features/todo_with_filter/data/todo_repository_implementation.dart';
 import 'package:detailed_hands_on/features/todo_with_filter/presentation/bloc/todo_bloc.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +7,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  TodoDatabase().initDB();
+  print('Database initialized');
   TodoRepositoryImplementation todoRepositoryImplementation =
       TodoRepositoryImplementation();
   runApp(MyApp(todoRepositoryImplementation: todoRepositoryImplementation));

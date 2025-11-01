@@ -1,5 +1,5 @@
 class TodoModel {
-  String? id;
+  int? id;
   final String title;
   final bool isDone;
   final DateTime createdAt;

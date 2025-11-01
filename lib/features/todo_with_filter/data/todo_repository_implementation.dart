@@ -21,7 +21,7 @@ class TodoRepositoryImplementation extends TodoRepository {
   }
 
   @override
-  Future<void> updateTodo(TodoModel todo) {
-    return dataSource.updateTodo(todo);
+  Future<void> updateTodo(int ID) {
+    return dataSource.updateTodo(ID);
   }
 }

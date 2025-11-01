@@ -81,8 +81,12 @@ class _TodoListWithFilterState extends State<TodoListWithFilter> {
                             trailing: Checkbox(
                               value: state.todos[index].isDone,
                               onChanged: (value) {
+                                print(
+                                  'Toggling todo ID: ${state.todos[index].id}',
+                                );
+                                final id = state.todos[index].id;
                                 context.read<TODOBloc>().add(
-                                  ToggleTodoEvent(state.todos[index]),
+                                  ToggleTodoEvent(id ?? -1),
                                 );
                                 // context.read<TODOBloc>().add(
                                 //   ToggleTodoEvent(state.filteredTodos[index]),

@@ -14,70 +14,83 @@ class TODOBloc extends Bloc<TodoEvent, TodoState> {
     on<LoadTodosEvent>(_loadTodosEvent);
     add(LoadTodosEvent());
   }
-  void _loadTodosEvent(LoadTodosEvent event, Emitter<TodoState> emit) {
+  void _loadTodosEvent(LoadTodosEvent event, Emitter<TodoState> emit) async {
+    List<TodoModel> todos = await todoRepositoryImplementation.fetchTodos();
     emit(
       state.copyWith(
-        todos: List.from(state.todos)..add(TodoModel(title: 'Initial Todo')),
-        filteredTodos: List.from(state.filteredTodos)
-          ..add(TodoModel(title: 'Initial Todo')),
+        todos: todos,
+        filteredTodos: todos,
         status: TodoStatus.completed,
       ),
     );
     print('New length of todos: ${state.todos.length}');
   }
 
-  void _addTodoEvent(AddTodoEvent event, Emitter<TodoState> emit) {
-    print('Adding todo: ${event.todo}');
+  void _addTodoEvent(AddTodoEvent event, Emitter<TodoState> emit) async {
+    print('Adding todo: ${event.todo.toMap()}');
+
+    // Immediately update the state by adding the todo to both lists
+    final updatedTodos = [...state.todos, event.todo];
+    final updatedFilteredTodos = [...state.filteredTodos, event.todo];
+
     emit(
       state.copyWith(
-        todos: List.from(state.todos)..add(event.todo),
-        filteredTodos: List.from(state.filteredTodos)..add(event.todo),
+        todos: updatedTodos,
+        filteredTodos: updatedFilteredTodos,
         status: TodoStatus.completed,
       ),
     );
+
+    // Persist to database in the background (no await to avoid blocking UI)
+    todoRepositoryImplementation.addTodo(event.todo);
+
     print('New length of todos: ${state.todos.length}');
   }
 
-  void _removeTodoEvent(RemoveTodoEvent event, Emitter<TodoState> emit) {
+  void _removeTodoEvent(RemoveTodoEvent event, Emitter<TodoState> emit) async {
     print('Removing todo: ${event.todo.createdAt}');
+
+    // Immediately update the state by removing the todo from both lists
+    final updatedTodos = state.todos
+        .where((todo) => todo.id != event.todo.id)
+        .toList();
+    final updatedFilteredTodos = state.filteredTodos
+        .where((todo) => todo.id != event.todo.id)
+        .toList();
+
     emit(
       state.copyWith(
-        todos: state.todos
-            .where(
-              (todo) =>
-                  (todo.title != event.todo.title ||
-                  todo.createdAt != event.todo.createdAt),
-            )
-            .toList(),
-        filteredTodos: state.filteredTodos
-            .where(
-              (todo) =>
-                  (todo.title != event.todo.title ||
-                  todo.createdAt != event.todo.createdAt),
-            )
-            .toList(),
+        todos: updatedTodos,
+        filteredTodos: updatedFilteredTodos,
         status: TodoStatus.completed,
       ),
     );
-    print('New length of todos: ${state.todos.length}');
+
+    // Persist to database in the background (no await to avoid blocking UI)
+    todoRepositoryImplementation.removeTodo(event.todo);
+
+    print('New length of todos delete: ${state.todos.length}');
   }
 
-  void _toggleTodoEvent(ToggleTodoEvent event, Emitter<TodoState> emit) {
-    emit(
-      state.copyWith(
-        todos: state.todos.map((todo) {
-          if (todo == event.todo) {
-            return TodoModel(title: todo.title, isDone: !todo.isDone);
-          }
-          return todo;
-        }).toList(),
-        filteredTodos: state.filteredTodos.map((todo) {
-          if (todo == event.todo) {
-            return TodoModel(title: todo.title, isDone: !todo.isDone);
-          }
-          return todo;
-        }).toList(),
-      ),
-    );
+  void _toggleTodoEvent(ToggleTodoEvent event, Emitter<TodoState> emit) async {
+    print('Toggling todo ID: ${event.ID}');
+
+    final updatedList = state.todos.map((todo) {
+      if (todo.id == event.ID) {
+        return TodoModel(
+          id: todo.id,
+          title: todo.title,
+          isDone: !todo.isDone,
+          createdAt: todo.createdAt,
+        );
+      }
+      return todo;
+    }).toList();
+
+    emit(state.copyWith(todos: updatedList, filteredTodos: updatedList));
+
+    print('calling updateTodo from repository');
+    // Persist to database in the background (no await to avoid blocking UI and no reload)
+    todoRepositoryImplementation.updateTodo(event.ID);
   }
 }

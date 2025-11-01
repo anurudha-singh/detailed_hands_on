@@ -21,7 +21,7 @@ class RemoveTodoEvent extends TodoEvent {
 }
 
 class ToggleTodoEvent extends TodoEvent {
-  final TodoModel todo;
+  final int ID;
 
-  ToggleTodoEvent(this.todo);
+  ToggleTodoEvent(this.ID);
 }
