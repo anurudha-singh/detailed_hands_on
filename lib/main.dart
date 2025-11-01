@@ -1,3 +1,4 @@
+import 'package:detailed_hands_on/core/bloc/bloc/themes_bloc.dart';
 import 'package:detailed_hands_on/core/utils/routes.dart';
 import 'package:detailed_hands_on/features/counter/presentation/bloc/counter_bloc.dart';
 import 'package:detailed_hands_on/features/todo_with_filter/data/todo_database.dart';
@@ -31,12 +32,18 @@ class MyApp extends StatelessWidget {
         ),
 
         BlocProvider(create: (BuildContext context) => CounterBloc()),
+        BlocProvider(create: (BuildContext context) => ThemesBloc()),
       ],
-      child: MaterialApp(
-        title: 'Detailed Hands On',
-        // initialRoute: '/todo_list_with_filter',
-        debugShowCheckedModeBanner: false,
-        routes: routes,
+      child: BlocBuilder<ThemesBloc, ThemesState>(
+        builder: (context, state) {
+          return MaterialApp(
+            title: 'Detailed Hands On',
+            theme: state.isDark ? ThemeData.dark() : ThemeData.light(),
+            // initialRoute: '/todo_list_with_filter',
+            debugShowCheckedModeBanner: false,
+            routes: routes,
+          );
+        },
       ),
     );
   }

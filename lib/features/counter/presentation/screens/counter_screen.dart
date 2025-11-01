@@ -1,3 +1,4 @@
+import 'package:detailed_hands_on/core/bloc/bloc/themes_bloc.dart';
 import 'package:detailed_hands_on/features/counter/presentation/bloc/counter_bloc.dart';
 import 'package:detailed_hands_on/features/counter/presentation/bloc/counter_event.dart';
 import 'package:detailed_hands_on/features/counter/presentation/bloc/counter_state.dart';
@@ -20,6 +21,16 @@ class _CounterScreenState extends State<CounterScreen> {
       appBar: AppBar(
         title: const Text('Counter'),
         backgroundColor: Colors.blueAccent,
+        actions: [
+          BlocBuilder<ThemesBloc, ThemesState>(
+            builder: (context, state) => Switch(
+              value: state.isDark,
+              onChanged: (value) {
+                context.read<ThemesBloc>().add(ToggleTheme());
+              },
+            ),
+          ),
+        ],
       ),
       body: Center(
         child: Column(
