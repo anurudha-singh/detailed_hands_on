@@ -37,6 +37,7 @@ class _CounterScreenState extends State<CounterScreen> {
   void suggestKeywords(String query) {
     if (query.isEmpty) {
       suggestions = [];
+      setState(() {});
       // print('No query entered, suggestions cleared.');
       return;
     }
@@ -59,7 +60,6 @@ class _CounterScreenState extends State<CounterScreen> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
-        resizeToAvoidBottomInset: true,
         appBar: AppBar(
           title: const Text('Counter'),
           backgroundColor: Colors.blueAccent,
