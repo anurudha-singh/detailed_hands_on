@@ -30,102 +30,155 @@ class CounterScreen extends StatefulWidget {
 }
 
 class _CounterScreenState extends State<CounterScreen> {
+  List<String> items = ['Apple', 'Banana', 'Cherry', 'Date', 'Elderberry'];
+  List<String> suggestions = [];
+  TextEditingController searchController = TextEditingController();
+
+  void suggestKeywords(String query) {
+    if (query.isEmpty) {
+      suggestions = [];
+      // print('No query entered, suggestions cleared.');
+      return;
+    }
+    suggestions = items
+        .where(
+          (item) =>
+              item.toLowerCase().startsWith(query.toLowerCase()) ||
+              item.contains(query.toLowerCase()),
+        )
+        .toList();
+    setState(() {});
+    print('Suggestions for "$query": $suggestions');
+    // return suggestions;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Counter'),
-        backgroundColor: Colors.blueAccent,
-        actions: [
-          BlocBuilder<LanguageBloc, LanguageState>(
-            builder: (context, state) {
-              return GestureDetector(
-                onTap: () {
-                  print('changing language to ${state.currentlocale}');
-                  context.read<LanguageBloc>().add(
-                    ChangeLanguage(state.currentlocale == 'en' ? 'es' : 'en'),
-                  );
-                },
-                child: Icon(Icons.language),
-              );
-            },
-          ),
-
-          BlocBuilder<ThemesBloc, ThemesState>(
-            builder: (context, state) => Switch(
-              value: state.isDark,
-              onChanged: (value) {
-                context.read<ThemesBloc>().add(ToggleTheme());
-              },
-            ),
-          ),
-        ],
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('Current counter value is'),
-            SizedBox(height: 30),
-            BlocBuilder<CounterBloc, CounterState>(
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        appBar: AppBar(
+          title: const Text('Counter'),
+          backgroundColor: Colors.blueAccent,
+          actions: [
+            BlocBuilder<LanguageBloc, LanguageState>(
               builder: (context, state) {
-                return Text('${state.count}');
+                return GestureDetector(
+                  onTap: () {
+                    print('changing language to ${state.currentlocale}');
+                    context.read<LanguageBloc>().add(
+                      ChangeLanguage(state.currentlocale == 'en' ? 'es' : 'en'),
+                    );
+                  },
+                  child: Icon(Icons.language),
+                );
               },
             ),
-            SizedBox(height: 30),
-            Row(
+
+            BlocBuilder<ThemesBloc, ThemesState>(
+              builder: (context, state) => Switch(
+                value: state.isDark,
+                onChanged: (value) {
+                  context.read<ThemesBloc>().add(ToggleTheme());
+                },
+              ),
+            ),
+          ],
+        ),
+        body: Center(
+          child: SingleChildScrollView(
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ElevatedButton(
-                  onPressed: () {
-                    context.read<CounterBloc>().add(IncrementCounter());
+                TextField(
+                  controller: searchController,
+                  onChanged: (value) {
+                    suggestKeywords(value);
                   },
-                  child: Text('Increment'),
+                  decoration: InputDecoration(
+                    labelText: 'Enter a fruit',
+                    border: OutlineInputBorder(),
+                    suffixIcon: Icon(Icons.search),
+                  ),
                 ),
-                SizedBox(width: 20),
+
+                (suggestions.isNotEmpty && searchController.text.isNotEmpty)
+                    ? ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: suggestions.length,
+                        itemBuilder: (context, index) {
+                          return ListTile(title: Text(suggestions[index]));
+                        },
+                      )
+                    : Container(),
+
+                SizedBox(height: 20),
+                Text('Current counter value is'),
+                SizedBox(height: 30),
+                BlocBuilder<CounterBloc, CounterState>(
+                  builder: (context, state) {
+                    return Text('${state.count}');
+                  },
+                ),
+                SizedBox(height: 30),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        context.read<CounterBloc>().add(IncrementCounter());
+                      },
+                      child: Text('Increment'),
+                    ),
+                    SizedBox(width: 20),
+                    ElevatedButton(
+                      onPressed: () {
+                        context.read<CounterBloc>().add(DecrementCounter());
+                      },
+                      child: Text('Decrement'),
+                    ),
+                  ],
+                ),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.1),
+                ElevatedButton(
+                  onPressed: () async {
+                    ReceivePort receivePort = ReceivePort();
+                    await Isolate.spawn(
+                      isolateEntrypointWithCommunication,
+                      receivePort.sendPort,
+                    );
+
+                    // Listen for messages from the spawned isolate
+                    receivePort.listen((message) {
+                      print('Message received from isolate: $message');
+                      receivePort.close(); // Close the port when done
+                    });
+                  },
+                  child: Text('See Isolated example'),
+                ),
+                SizedBox(height: 20),
+                Text(
+                  'Use the bottom navigation tabs to switch between features',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontStyle: FontStyle.italic,
+                    color: Colors.grey[600],
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () {
-                    context.read<CounterBloc>().add(DecrementCounter());
+                    Navigator.pushNamed(context, PaginationList.routeName);
                   },
-                  child: Text('Decrement'),
+                  child: Text('See pagination infinite list'),
                 ),
               ],
             ),
-            SizedBox(height: MediaQuery.of(context).size.height * 0.1),
-            ElevatedButton(
-              onPressed: () async {
-                ReceivePort receivePort = ReceivePort();
-                await Isolate.spawn(
-                  isolateEntrypointWithCommunication,
-                  receivePort.sendPort,
-                );
-
-                // Listen for messages from the spawned isolate
-                receivePort.listen((message) {
-                  print('Message received from isolate: $message');
-                  receivePort.close(); // Close the port when done
-                });
-              },
-              child: Text('See Isolated example'),
-            ),
-            SizedBox(height: 20),
-            Text(
-              'Use the bottom navigation tabs to switch between features',
-              style: TextStyle(
-                fontSize: 16,
-                fontStyle: FontStyle.italic,
-                color: Colors.grey[600],
-              ),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, PaginationList.routeName);
-              },
-              child: Text('See pagination infinite list'),
-            ),
-          ],
+          ),
         ),
       ),
     );
