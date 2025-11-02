@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:isolate';
 import 'package:detailed_hands_on/core/bloc/bloc/language/language_bloc.dart';
 import 'package:detailed_hands_on/core/bloc/bloc/language/language_event.dart';
@@ -8,6 +9,23 @@ import 'package:detailed_hands_on/features/counter/presentation/bloc/counter_eve
 import 'package:detailed_hands_on/features/counter/presentation/bloc/counter_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+// Debouncer class implementation
+class Debouncer {
+  final int milliseconds;
+  Timer? _timer;
+
+  Debouncer({required this.milliseconds});
+
+  void run(VoidCallback action) {
+    _timer?.cancel();
+    _timer = Timer(Duration(milliseconds: milliseconds), action);
+  }
+
+  void dispose() {
+    _timer?.cancel();
+  }
+}
 
 // Top-level function for isolate entry point
 void isolateEntrypointWithCommunication(SendPort sendPort) {
@@ -33,14 +51,19 @@ class _CounterScreenState extends State<CounterScreen> {
   List<String> items = ['Apple', 'Banana', 'Cherry', 'Date', 'Elderberry'];
   List<String> suggestions = [];
   TextEditingController searchController = TextEditingController();
+  bool isSearching = false;
+
+  // Initialize debouncer with 300ms delay
+  late final Debouncer _debouncer = Debouncer(milliseconds: 300);
 
   void suggestKeywords(String query) {
     if (query.isEmpty) {
       suggestions = [];
+      isSearching = false;
       setState(() {});
-      // print('No query entered, suggestions cleared.');
       return;
     }
+
     suggestions = items
         .where(
           (item) =>
@@ -48,9 +71,29 @@ class _CounterScreenState extends State<CounterScreen> {
               item.contains(query.toLowerCase()),
         )
         .toList();
+    isSearching = false;
     setState(() {});
-    print('Suggestions for "$query": $suggestions');
-    // return suggestions;
+    print('Suggestions for "$query": $suggestions (optimized with debouncer)');
+  }
+
+  void _onSearchChanged(String query) {
+    if (query.isNotEmpty) {
+      setState(() {
+        isSearching = true;
+      });
+    }
+
+    // Use debouncer to delay the search operation
+    _debouncer.run(() {
+      suggestKeywords(query);
+    });
+  }
+
+  @override
+  void dispose() {
+    _debouncer.dispose();
+    searchController.dispose();
+    super.dispose();
   }
 
   @override
@@ -95,9 +138,7 @@ class _CounterScreenState extends State<CounterScreen> {
               children: [
                 TextField(
                   controller: searchController,
-                  onChanged: (value) {
-                    suggestKeywords(value);
-                  },
+                  onChanged: _onSearchChanged,
                   decoration: InputDecoration(
                     labelText: 'Enter a fruit',
                     border: OutlineInputBorder(),
@@ -105,15 +146,39 @@ class _CounterScreenState extends State<CounterScreen> {
                   ),
                 ),
 
-                (suggestions.isNotEmpty && searchController.text.isNotEmpty)
-                    ? ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: suggestions.length,
-                        itemBuilder: (context, index) {
-                          return ListTile(title: Text(suggestions[index]));
-                        },
-                      )
-                    : Container(),
+                // Search suggestions with loading indicator
+                if (searchController.text.isNotEmpty)
+                  Container(
+                    height: 200,
+                    child: isSearching
+                        ? Center(
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : suggestions.isNotEmpty
+                        ? ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: suggestions.length,
+                            itemBuilder: (context, index) {
+                              return ListTile(
+                                title: Text(suggestions[index]),
+                                leading: Icon(Icons.apple),
+                                onTap: () {
+                                  searchController.text = suggestions[index];
+                                  FocusScope.of(context).unfocus();
+                                },
+                              );
+                            },
+                          )
+                        : Center(
+                            child: Text(
+                              'No fruits found',
+                              style: TextStyle(
+                                color: Colors.grey[600],
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                          ),
+                  ),
 
                 SizedBox(height: 20),
                 Text('Current counter value is'),
