@@ -52,19 +52,20 @@ class TODOBloc extends Bloc<TodoEvent, TodoState> {
     print('Adding todo: ${event.todo.toMap()}');
 
     // Immediately update the state by adding the todo to both lists
-    final updatedTodos = [...state.todos, event.todo];
-    final updatedFilteredTodos = [...state.filteredTodos, event.todo];
+    // final updatedTodos = [...state.todos, event.todo];
+    // final updatedFilteredTodos = [...state.filteredTodos, event.todo];
 
-    emit(
-      state.copyWith(
-        todos: updatedTodos,
-        filteredTodos: updatedFilteredTodos,
-        status: TodoStatus.completed,
-      ),
-    );
+    // emit(
+    //   state.copyWith(
+    //     todos: updatedTodos,
+    //     filteredTodos: updatedFilteredTodos,
+    //     status: TodoStatus.completed,
+    //   ),
+    // );
 
     // Persist to database in the background (no await to avoid blocking UI)
     todoRepositoryImplementation.addTodo(event.todo);
+    add(LoadTodosEvent());
 
     print('New length of todos: ${state.todos.length}');
   }

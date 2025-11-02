@@ -4,6 +4,7 @@ import 'features/posts/data/posts_repository.dart';
 import 'features/posts/presentation/bloc/posts_bloc.dart';
 import 'features/posts/presentation/screens/posts_screen.dart';
 
+//We can delete this for sure if we don't need a separate main for posts demo because we have integrated posts feature in the main app.
 void main() {
   runApp(const MyPostsApp());
 }

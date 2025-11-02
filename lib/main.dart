@@ -2,6 +2,8 @@ import 'package:detailed_hands_on/core/bloc/bloc/language/language_bloc.dart';
 import 'package:detailed_hands_on/core/bloc/bloc/themes_bloc.dart';
 import 'package:detailed_hands_on/core/utils/routes.dart';
 import 'package:detailed_hands_on/features/counter/presentation/bloc/counter_bloc.dart';
+import 'package:detailed_hands_on/features/posts/data/posts_repository.dart';
+import 'package:detailed_hands_on/features/posts/presentation/bloc/posts_bloc.dart';
 import 'package:detailed_hands_on/features/todo_with_filter/data/todo_database.dart';
 import 'package:detailed_hands_on/features/todo_with_filter/data/todo_repository_implementation.dart';
 import 'package:detailed_hands_on/features/todo_with_filter/presentation/bloc/todo_bloc.dart';
@@ -11,7 +13,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  TodoDatabase().initDB();
+  await TodoDatabase().initDB();
   print('Database initialized');
   await EasyLocalization.ensureInitialized();
   TodoRepositoryImplementation todoRepositoryImplementation =
@@ -43,6 +45,10 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (BuildContext context) => CounterBloc()),
         BlocProvider(create: (BuildContext context) => ThemesBloc()),
         BlocProvider(create: (BuildContext context) => LanguageBloc()),
+        BlocProvider(
+          create: (BuildContext context) =>
+              PostsBloc(postsRepository: PostsRepository()),
+        ),
       ],
       child: BlocBuilder<ThemesBloc, ThemesState>(
         builder: (context, state) {
